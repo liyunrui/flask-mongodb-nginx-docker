@@ -1,0 +1,30 @@
+
+version: '3'
+
+services:
+
+  web:
+    container_name: app_server
+    restart: always
+    build: ./app_server
+    # maps port 8000 in the host to port 8000 in the container(Host:Contatiner)
+    ports:
+      - "8000:8000"
+    command: gunicorn -b 0.0.0.0:8000 -w 3 app:app
+    depends_on:
+      - mongodb
+  mongodb:
+    container_name: database
+    image: mongo:2.6.10
+    restart: always
+    ports:
+      - "27017:27017"
+
+  nginx:
+    container_name: nginx
+    restart: always
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - web
